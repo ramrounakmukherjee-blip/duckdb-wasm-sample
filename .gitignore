@@ -32,3 +32,8 @@ pnpm-debug.log*
 
 # TypeScript cache
 *.tsbuildinfo
+
+# WASM cache
+*.wasm
+*.wat
+.DS_Store

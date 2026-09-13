@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "asbuild": "asc ./src/wasm/fibonacci_as.ts -o ./public/fibonacci_as.wasm -t ./public/fibonacci_as.wat",
     "check": "biome check ./src",
     "check:fix": "biome check --write ./src",
     "lint": "biome lint ./src",

@@ -4,6 +4,7 @@ import { DataTable } from "./components/DataTable";
 import { Dropzone } from "./components/Dropzone";
 import { QueryEditor } from "./components/QueryEditor";
 import { TableList } from "./components/TableList";
+import { WasmVsTSComparison } from "./components/WasmVsTSComparison";
 import { useDuckDB } from "./useDuckDB";
 
 function App() {
@@ -50,6 +51,8 @@ function App() {
           isRunning={isQuerying}
           disabled={!ready}
         />
+
+        <WasmVsTSComparison />
 
         {queryError && <div className="error-banner">{queryError}</div>}
 
