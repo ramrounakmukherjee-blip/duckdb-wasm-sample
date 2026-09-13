@@ -11,7 +11,8 @@
     "lint": "biome lint ./src",
     "lint:fix": "biome lint --write ./src",
     "format": "biome format --write ./src",
-    "verify": "npm run lint:fix && npm run check:fix && npm run format && npm run check && npm run build",    "preview": "vite preview"
+    "verify": "npm run lint:fix && npm run check:fix && npm run format && npm run check && npm run build",
+    "preview": "vite preview"
   },
   "dependencies": {
     "@duckdb/duckdb-wasm": "1.33.1-dev57.0",

@@ -1,10 +1,4 @@
-// TODO: change to LoadedTable[] type from useDuckDB hook later
-export interface LoadedTable {
-  name: string;
-  fileName: string;
-  rowCount: number;
-  columns: string[];
-}
+import type { LoadedTable } from "../useDuckDB";
 
 interface Props {
   tables: LoadedTable[];
