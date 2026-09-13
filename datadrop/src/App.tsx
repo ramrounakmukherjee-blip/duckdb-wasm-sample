@@ -4,44 +4,62 @@ import { DataTable } from "./components/DataTable";
 import { Dropzone } from "./components/Dropzone";
 import { QueryEditor } from "./components/QueryEditor";
 import { TableList } from "./components/TableList";
+import { useDuckDB } from "./useDuckDB";
 
 function App() {
+  const { ready, initError, tables, result, queryError, isQuerying, loadCSV, runQuery } =
+    useDuckDB();
+
   const [sql, setSql] = useState<string>("");
   const [activeView, setActiveView] = useState<"table" | "chart">("table");
 
+  if (initError) {
+    return (
+      <div className="init-error">
+        <h2>Failed to initialise DuckDB</h2>
+        <pre>{initError}</pre>
+      </div>
+    );
+  }
+
   return (
-    <div>
-      <div className="layout">
-        <header className="header">
-          <div className="header-brand">
-            <span className="header-logo">◆</span>
-            <span className="header-title">DataDrop</span>
-          </div>
-          <span className="header-tagline">In-browser SQL analytics - powered by DuckDB-WASM</span>
-        </header>
+    <div className="layout">
+      <header className="header">
+        <div className="header-brand">
+          <span className="header-logo">◆</span>
+          <span className="header-title">DataDrop</span>
+        </div>
+        <span className="header-tagline">In-browser SQL analytics - powered by DuckDB-WASM</span>
+        {!ready && <span className="header-status">Loading DuckDB...</span>}
+      </header>
 
-        <main className="content">
-          {/* // TODO: Implement loadCSV function and manage DuckDB readiness state */}
-          <Dropzone onFile={(files) => console.log(files)} />
+      <main className="content">
+        <Dropzone onFile={loadCSV} disabled={!ready} />
 
-          {/* // TODO: Replace empty tables array with actual loaded tables from DuckDB hook */}
+        {tables.length > 0 && (
           <TableList
-            tables={[]}
-            onSelect={(name) => setSql(`SELECT *\nFROM "${name}"\nLIMIT 10`)}
+            tables={tables}
+            onSelect={(name) => setSql(`SELECT *\nFROM "${name}"\nLIMIT 10;`)}
           />
+        )}
 
-          {/* // TODO: Implement query execution and manage query state */}
-          <QueryEditor
-            sql={sql}
-            onChange={setSql}
-            onRun={() => console.log("Run query")}
-            isRunning={false}
-            disabled={false}
-          />
+        <QueryEditor
+          sql={sql}
+          onChange={setSql}
+          onRun={() => runQuery(sql)}
+          isRunning={isQuerying}
+          disabled={!ready}
+        />
 
+        {queryError && <div className="error-banner">{queryError}</div>}
+
+        {result && (
           <section className="results">
             <div className="results-header">
-              <span className="results-meta">{/* TODO: Display query metadata */}</span>
+              <span className="results-meta">
+                {result.rowCount.toLocaleString()} row
+                {result.rowCount !== 1 ? "s" : ""} - {result.durationMs} ms
+              </span>
               <div className="results-tabs">
                 <button
                   type="button"
@@ -62,15 +80,13 @@ function App() {
             </div>
 
             {activeView === "table" ? (
-              // TODO: Display query results using the DataTable component
-              <DataTable columns={[]} rows={[]} />
+              <DataTable columns={result.columns} rows={result.rows} />
             ) : (
-              // TODO: Display query results using the ChartView component
-              <ChartView columns={[]} rows={[]} />
+              <ChartView columns={result.columns} rows={result.rows} />
             )}
           </section>
-        </main>
-      </div>
+        )}
+      </main>
     </div>
   );
 }
